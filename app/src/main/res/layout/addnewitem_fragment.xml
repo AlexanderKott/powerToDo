@@ -1,0 +1,25 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:layout_gravity="center" android:orientation="vertical"
+    android:padding="10dp"
+    >
+
+    <EditText
+        android:id="@+id/add_todo_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lines="8"
+        android:gravity="start|top"
+        android:inputType="textMultiLine"
+        android:imeOptions="actionDone"
+        android:maxLength="500"
+        android:padding="2dp"
+        />
+    <CheckBox
+        android:id="@+id/checkBoxManyLines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Every line as new Todo item"
+
+        />
+</LinearLayout>
