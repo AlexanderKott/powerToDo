@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.mobiledevelopment.powertodo">
+    package="site.kotty_kov.powertodo">
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".ui.main.App"
+        android:name="site.kotty_kov.powertodo.todolist.main.common.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PowerToDo">
         <activity
-            android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:name="site.kotty_kov.powertodo.todolist.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.PowerToDo.NoActionBar">
             <intent-filter>
@@ -20,6 +25,29 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name="site.kotty_kov.powertodo.todolist.main.inprogress.NotificationPublisher"
+            android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+
+        <receiver
+            android:name="site.kotty_kov.powertodo.todolist.main.inprogress.TimeChangedBroadcastReceiver"
+            android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 </manifest>
