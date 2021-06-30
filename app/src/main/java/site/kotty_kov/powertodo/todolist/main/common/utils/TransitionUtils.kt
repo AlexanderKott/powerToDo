@@ -8,6 +8,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.fragment.app.setFragmentResult
 import site.kotty_kov.powertodo.R
+import site.kotty_kov.powertodo.todolist.main.common.loading.LoadingFragment
 import site.kotty_kov.powertodo.todolist.main.common.login.LoginFragment
 import site.kotty_kov.powertodo.todolist.main.common.preferences.SettingsFragment
 import site.kotty_kov.powertodo.todolist.main.inprogress.view.InProgressEditRecordFragment
@@ -15,11 +16,11 @@ import site.kotty_kov.powertodo.todolist.main.inprogress.view.InProgressSetTimer
 import site.kotty_kov.powertodo.todolist.main.inprogress.view.InprogressFragmentChildList
 import site.kotty_kov.powertodo.todolist.main.notepad.NotePadMainFragment
 import site.kotty_kov.powertodo.todolist.main.todo.view.ToDoMainFragment
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelCommon
+import site.kotty_kov.powertodo.todolist.main.viewModel.CommonViewModel
 
 
 //------------- Set InProgress child fragments from Main InProgress Fragment ---------------
-fun Fragment.displayRecordEdit(vm: SharedViewModelCommon) {
+fun Fragment.displayRecordEdit(vm: CommonViewModel) {
     childFragmentManager.commit {
         setReorderingAllowed(true)
         replace<InProgressEditRecordFragment>(
@@ -30,7 +31,7 @@ fun Fragment.displayRecordEdit(vm: SharedViewModelCommon) {
     vm.setLastInPorgressScreenStateAsRecordEdit()
 }
 
-fun Fragment.displayTimerEdit(vm: SharedViewModelCommon) {
+fun Fragment.displayTimerEdit(vm: CommonViewModel) {
     childFragmentManager.commit {
         setReorderingAllowed(true)
         replace<InProgressSetTimerFragment>(
@@ -41,7 +42,7 @@ fun Fragment.displayTimerEdit(vm: SharedViewModelCommon) {
       vm.setLastInPorgressScreenStateAsTitmer()
 }
 
-  fun Fragment.displayList(vm: SharedViewModelCommon) {
+  fun Fragment.displayList(vm: CommonViewModel) {
     childFragmentManager.commit {
         replace<InprogressFragmentChildList>(R.id.child_fragment_container)
         setReorderingAllowed(true)
@@ -51,7 +52,7 @@ fun Fragment.displayTimerEdit(vm: SharedViewModelCommon) {
 
 
 // ---------------------------- InProgress back to List--------------------------------------
-fun Fragment.backToList(vm: SharedViewModelCommon) {
+fun Fragment.backToList(vm: CommonViewModel) {
     childFragmentManager.commit {
         setReorderingAllowed(true)
         replace<InprogressFragmentChildList>(
@@ -98,7 +99,7 @@ fun Fragment.requestPasswordPage() {
 //-----------------------------Main activity sets fragments: ---------------------------------------
 
 
-fun AppCompatActivity.requestTodoFragment(vm: SharedViewModelCommon , page : Int = 0) {
+fun AppCompatActivity.requestTodoFragment(vm: CommonViewModel, page : Int = 0) {
     supportFragmentManager.commit {
         replace<ToDoMainFragment>(R.id.child, "ToDoMainFragment", bundleOf("page" to page))
         setReorderingAllowed(true)
@@ -108,12 +109,21 @@ fun AppCompatActivity.requestTodoFragment(vm: SharedViewModelCommon , page : Int
     requestUnspecified()
 }
 
-fun AppCompatActivity.requestNotepadFragment(vm: SharedViewModelCommon, editNote: Boolean = false) {
+fun AppCompatActivity.requestNotepadFragment(vm: CommonViewModel, editNote: Boolean = false) {
     supportFragmentManager.commit {
         replace<NotePadMainFragment>(R.id.child,"NotePadMainFragment")
         setReorderingAllowed(true)
     }
     vm.setStateNotepad()
+    requestUnspecified()
+}
+
+
+fun AppCompatActivity.requestLoadingFragment() {
+    supportFragmentManager.commit {
+        replace<LoadingFragment>(R.id.child)
+        setReorderingAllowed(true)
+    }
     requestUnspecified()
 }
 
@@ -128,7 +138,7 @@ fun AppCompatActivity.requestPasswordFragment() {
 }
 
 
-  fun AppCompatActivity.requestSettingsFragment(vm: SharedViewModelCommon) {
+  fun AppCompatActivity.requestSettingsFragment(vm: CommonViewModel) {
     supportFragmentManager.commit {
         replace<SettingsFragment>(R.id.child, Values.settingsFragment)
         addToBackStack("SettingsFragment")

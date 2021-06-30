@@ -16,13 +16,13 @@ import site.kotty_kov.powertodo.todolist.main.common.Values
 import site.kotty_kov.powertodo.todolist.main.done.PlainTextSharingHandler
 import site.kotty_kov.powertodo.todolist.main.inprogress.timeToReadableFormat
 import site.kotty_kov.powertodo.todolist.main.inprogress.timeValues
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 
 
 class InProgressEditRecordFragment : Fragment() {
     private lateinit var binding: FragmentInprogressChildEditRecordBinding
 
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
     private var elapsedTimeT = 0
@@ -39,7 +39,7 @@ class InProgressEditRecordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //load data
-        viewModelToDo.getInProgressTempItem()?.let {
+        viewModelToDoViewModel.getInProgressTempItem()?.let {
             binding.acceptanceCriteria.setText(it.acceptance_criteria)
             binding.detailsEdit.setText(it.text)
             binding.taskNumber.setText("#${it.number}")
@@ -61,7 +61,7 @@ class InProgressEditRecordFragment : Fragment() {
         binding.delegate.setOnClickListener {
             saveDataToDB()
 
-            viewModelToDo.getInProgressTempItem()?.let {
+            viewModelToDoViewModel.getInProgressTempItem()?.let {
                 PlainTextSharingHandler.share(
                     requireContext(),
                     PlainTextSharingHandler.formatInprogressItem(
@@ -108,8 +108,8 @@ class InProgressEditRecordFragment : Fragment() {
 
 
     private fun saveDataToDB() {
-        viewModelToDo.getInProgressTempItem()?.let {
-            viewModelToDo.updateInProgressItem(
+        viewModelToDoViewModel.getInProgressTempItem()?.let {
+            viewModelToDoViewModel.updateInProgressItem(
                 it.copy(
                     etime = elapsedTimeT,
                     text = binding.detailsEdit.text.toString(),
@@ -120,8 +120,8 @@ class InProgressEditRecordFragment : Fragment() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        viewModelToDo.getInProgressTempItem()?.let {
-            viewModelToDo.markInProgressItemAsTemp(
+        viewModelToDoViewModel.getInProgressTempItem()?.let {
+            viewModelToDoViewModel.markInProgressItemAsTemp(
                 it.copy(
                     etime = elapsedTimeT,
                     text = binding.detailsEdit.text.toString(),

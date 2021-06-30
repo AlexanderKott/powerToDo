@@ -8,7 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 import android.view.animation.AlphaAnimation
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -28,7 +28,7 @@ class InprogressFragmentChildList : Fragment() {
     private lateinit var recycler: RecyclerView
     private lateinit var rAdapter: InProgressItemsAdapter
 
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
 
@@ -44,16 +44,16 @@ class InprogressFragmentChildList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentInprogressChildListBinding.bind(view)
 
-        initRecycler(viewModelToDo, binding)
-        iniListSwitcher(viewModelToDo, binding)
-        initBottomNavigation(binding, viewModelToDo)
+        initRecycler(viewModelToDoViewModel, binding)
+        iniListSwitcher(viewModelToDoViewModel, binding)
+        initBottomNavigation(binding, viewModelToDoViewModel)
     }
 
     private fun iniListSwitcher(
-        viewModelToDo: SharedViewModelToDo,
+        viewModelToDoViewModel: ToDoViewModel,
         binding: FragmentInprogressChildListBinding
     ) {
-        viewModelToDo.inProgressItemsCount.observe(viewLifecycleOwner, { value ->
+        viewModelToDoViewModel.inProgressItemsCount.observe(viewLifecycleOwner, { value ->
             binding.switcher.displayedChild = value
             if (value == 1) {
                 binding.textEmpty1.isGone = false
@@ -74,10 +74,10 @@ class InprogressFragmentChildList : Fragment() {
 
     private fun initBottomNavigation(
         binding: FragmentInprogressChildListBinding,
-        viewModelToDo: SharedViewModelToDo
+        viewModelToDoViewModel: ToDoViewModel
     ) {
         with(binding.bottomNavigationX) {
-            viewModelToDo.colour.observe(viewLifecycleOwner, { color ->
+            viewModelToDoViewModel.colour.observe(viewLifecycleOwner, { color ->
                 when (color) {
                     0 -> pad1.isChecked = true
                     1 -> pad2.isChecked = true
@@ -88,22 +88,22 @@ class InprogressFragmentChildList : Fragment() {
 
 
             pad1.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
 
             }
 
             pad2.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
 
             }
 
             pad3.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
 
             }
 
             pad4.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
 
             }
 
@@ -127,7 +127,7 @@ class InprogressFragmentChildList : Fragment() {
             }
 
             close.setOnClickListener {
-                viewModelToDo.saveColorButtonsState()
+                viewModelToDoViewModel.saveColorButtonsState()
                 collapseBottom(binding.bottomNavigationX.bottomSheetX)
                 requestPasswordPage()
                 requireActivity().moveTaskToBack(true)
@@ -196,12 +196,12 @@ class InprogressFragmentChildList : Fragment() {
 
     private fun updateColor(
         it: View,
-        viewModelToDo: SharedViewModelToDo,
+        viewModelToDoViewModel: ToDoViewModel,
         binding:FragmentInprogressChildListBinding
     ) {
-        viewModelToDo.setColorToItemsReturn(Integer.parseInt(it.tag as String))
+        viewModelToDoViewModel.setColorToItemsReturn(Integer.parseInt(it.tag as String))
             with(binding.bottomNavigationX) {
-                viewModelToDo.prepareButtonsStateToSave(
+                viewModelToDoViewModel.prepareButtonsStateToSave(
                     pad1.isChecked,
                     pad2.isChecked,
                     pad3.isChecked,
@@ -215,11 +215,11 @@ class InprogressFragmentChildList : Fragment() {
 
 
 
-    private fun initRecycler(viewModelToDo: SharedViewModelToDo, binding: FragmentInprogressChildListBinding) {
+    private fun initRecycler(viewModelToDoViewModel: ToDoViewModel, binding: FragmentInprogressChildListBinding) {
         val adapter = InProgressItemsAdapter(object : InProgressActionsListener {
 
             override fun cardViewLongClick(item: InProgressItem) {
-                viewModelToDo.markInProgressItemAsTemp(item)
+                viewModelToDoViewModel.markInProgressItemAsTemp(item)
                 setFragmentResult(
                     Values.InProgressEditKey,
                     bundleOf(Values.RecordEditKey to "1")
@@ -227,7 +227,7 @@ class InprogressFragmentChildList : Fragment() {
             }
 
             override fun setTimerCheckboxClick(item: InProgressItem) {
-                viewModelToDo.markInProgressItemAsTemp(item)
+                viewModelToDoViewModel.markInProgressItemAsTemp(item)
                 setFragmentResult(
                     Values.InProgressEditKey,
                     bundleOf(Values.TimerEditKey to "1")
@@ -248,8 +248,8 @@ class InprogressFragmentChildList : Fragment() {
             override fun instantiateUnderlayButton(position: Int): List<UnderlayButton> {
                 var buttons = listOf<UnderlayButton>()
                 val cancelButton = cancelButton(position)
-                val failButton = markAsFailButton(position, viewModelToDo)
-                val doneButton = markAsDoneButton(position, viewModelToDo)
+                val failButton = markAsFailButton(position, viewModelToDoViewModel)
+                val doneButton = markAsDoneButton(position, viewModelToDoViewModel)
                 buttons = listOf(doneButton, failButton, cancelButton)
                 return buttons
             }
@@ -258,9 +258,9 @@ class InprogressFragmentChildList : Fragment() {
         itemTouchHelper.attachToRecyclerView(recycler)
 
 
-        viewModelToDo.inProgressItems.observe(viewLifecycleOwner, { posts ->
+        viewModelToDoViewModel.inProgressItems.observe(viewLifecycleOwner, { posts ->
             adapter.submitList(posts)
-            viewModelToDo.setInProgressItemsCount(posts.size)
+            viewModelToDoViewModel.setInProgressItemsCount(posts.size)
 
         })
 
@@ -283,7 +283,7 @@ class InprogressFragmentChildList : Fragment() {
             })
     }
 
-    private fun markAsFailButton(position: Int, vm :SharedViewModelToDo) : InProgressSwipeHelper.UnderlayButton {
+    private fun markAsFailButton(position: Int, vm :ToDoViewModel) : InProgressSwipeHelper.UnderlayButton {
         return InProgressSwipeHelper.UnderlayButton(
             requireContext(),
             requireContext().getString(R.string.markAsFail) ,
@@ -297,7 +297,7 @@ class InprogressFragmentChildList : Fragment() {
             })
     }
 
-    private fun markAsDoneButton(position: Int, vm :SharedViewModelToDo) : InProgressSwipeHelper.UnderlayButton {
+    private fun markAsDoneButton(position: Int, vm :ToDoViewModel) : InProgressSwipeHelper.UnderlayButton {
         return InProgressSwipeHelper.UnderlayButton(
             requireContext(),
               requireContext().getString(R.string.markAsDone),

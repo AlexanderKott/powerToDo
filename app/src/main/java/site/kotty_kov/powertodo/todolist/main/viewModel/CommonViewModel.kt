@@ -1,48 +1,55 @@
 package site.kotty_kov.powertodo.todolist.main.viewModel
 
 import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 import site.kotty_kov.powertodo.todolist.main.common.App
 import site.kotty_kov.powertodo.todolist.main.common.Values
 import site.kotty_kov.powertodo.todolist.main.data.db.TodoRoomDatabase
 import site.kotty_kov.powertodo.todolist.main.data.user.UserInfo
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepository
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepositoryImpl
+import site.kotty_kov.powertodo.todolist.main.repository.SharedPrefsRepository
+import site.kotty_kov.powertodo.todolist.main.repository.SharedPrefsRepositoryImpl
 
 
-class SharedViewModelCommon(base: TodoRoomDatabase, application: App) :
+class CommonViewModel(base: TodoRoomDatabase, application: App) :
     AndroidViewModel(application) {
 
 
     //----------- data sources ---------------
 
     //Shared prefs
-    private val colorButtons: SharedPrefsRepository = SharedPrefsRepositoryImpl(application.applicationContext)
+    private val colorButtons: SharedPrefsRepository =
+        SharedPrefsRepositoryImpl(application.applicationContext)
 
     //Room
-    private val roomRepo : RoomRepository = RoomRepositoryImpl(base)
+    private val roomRepo: RoomRepository = RoomRepositoryImpl(base)
 
 
     //-------------------------- variables -----------------------------------------
     //Common
 
-    //main activity
-    suspend fun isPasswordProtected(): Boolean {
-        val userInfo = roomRepo.getUserInfo()
-        return if (userInfo != null){
-            userInfo.password != Values.defaultPassword
-        } else {
-            roomRepo.insertUserInfo(UserInfo(id = 0, "", Values.defaultPassword, 0))
-            false
+    fun checkPassword() {
+        viewModelScope.launch {
+            val userInfo = roomRepo.getUserInfo()
+              if (userInfo == null) {
+                roomRepo.insertUserInfo(UserInfo(id = 0, "", Values.defaultPassword, 0))
+            }
         }
     }
 
-
-    //Login fragment
-    suspend fun getPassword(): String {
-        return roomRepo.getUserInfo().password
+    fun getPassword(): LiveData<String> {
+        return roomRepo.getUserInf().map { it.password }
     }
 
-
-    fun getUserInfo(): LiveData<UserInfo> {
-        return roomRepo.getUserInf()
+    fun isAppProtected(): LiveData<Boolean> {
+        return roomRepo.getUserInf().map {
+            if (it == null) {
+                false
+            } else {
+                it.password != Values.defaultPassword
+            }
+        }
     }
 
 
@@ -80,17 +87,16 @@ class SharedViewModelCommon(base: TodoRoomDatabase, application: App) :
     }
 
     fun setLastInPorgressScreenStateAsTitmer() {
-        applicationDisplayState =  5 //1
+        applicationDisplayState = 5 //1
     }
 
     fun setLastInPorgressScreenStateAsRecordEdit() {
-        applicationDisplayState =  6  //2
+        applicationDisplayState = 6  //2
     }
 
     fun setLastInPorgressScreenStateAsList() {
-        applicationDisplayState =  7 //0
+        applicationDisplayState = 7 //0
     }
-
 
 
     //---------------------------------

@@ -24,7 +24,7 @@ import site.kotty_kov.powertodo.R
 import site.kotty_kov.powertodo.todolist.main.common.Values
 import site.kotty_kov.powertodo.todolist.main.data.user.UserInfo
 import site.kotty_kov.powertodo.todolist.main.inprogress.getSound
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelCommon
+import site.kotty_kov.powertodo.todolist.main.viewModel.CommonViewModel
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -42,7 +42,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
    private var defaultRingtone : Ringtone? = null
 
-    private val viewModelCommon: SharedViewModelCommon by viewModels(
+    private val viewModelCommonViewModel: CommonViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
 
@@ -52,8 +52,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModelCommon.getUserInfo().observe(viewLifecycleOwner, { value ->
-            oldPassword = value.password
+        viewModelCommonViewModel.getPassword().observe(viewLifecycleOwner, { value ->
+            oldPassword = value
             passwordSwitch?.isChecked = oldPassword != Values.defaultPassword
         })
 
@@ -308,7 +308,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private fun savePassword(shPref: SharedPreferences, data: Any?) {
         if (data == null) {
-            viewModelCommon.updateItem(
+            viewModelCommonViewModel.updateItem(
                 UserInfo(
                     password = Values.defaultPassword,
                     lastAppState = 0
@@ -333,7 +333,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             null,
             {
                 //SAVE
-                viewModelCommon.updateItem(UserInfo(password = (data as String), lastAppState = 0))
+                viewModelCommonViewModel.updateItem(UserInfo(password = (data as String), lastAppState = 0))
 
                 //SWITCH
                 passwordSwitch?.isChecked = (data as String) != Values.defaultPassword

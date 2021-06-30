@@ -1,4 +1,4 @@
-package site.kotty_kov.powertodo.todolist.main.viewModel
+package site.kotty_kov.powertodo.todolist.main.repository
 
 import androidx.lifecycle.LiveData
 import site.kotty_kov.powertodo.todolist.main.data.DoneItem

@@ -11,8 +11,8 @@ import site.kotty_kov.powertodo.todolist.main.common.Values
 import site.kotty_kov.powertodo.todolist.main.data.InProgressItem
 import site.kotty_kov.powertodo.todolist.main.data.timer.ScheduledTimer
 import site.kotty_kov.powertodo.todolist.main.todo.view.Utils
-import site.kotty_kov.powertodo.todolist.main.viewModel.RoomRepository
-import site.kotty_kov.powertodo.todolist.main.viewModel.RoomRepositoryImpl
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepository
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepositoryImpl
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

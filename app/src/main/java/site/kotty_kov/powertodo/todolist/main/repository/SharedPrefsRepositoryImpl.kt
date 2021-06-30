@@ -1,10 +1,10 @@
-package site.kotty_kov.powertodo.todolist.main.viewModel
+package site.kotty_kov.powertodo.todolist.main.repository
 
 import android.content.Context
 
 
 
-class SharedPrefsRepositoryImpl(var context: Context) :  SharedPrefsRepository  {
+class SharedPrefsRepositoryImpl(var context: Context) : SharedPrefsRepository {
 
     init {
         loadColorButtonsState()

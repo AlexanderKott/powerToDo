@@ -1,4 +1,4 @@
-package site.kotty_kov.powertodo.todolist.main.common;
+package site.kotty_kov.powertodo.todolist.main.common.gestures;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;

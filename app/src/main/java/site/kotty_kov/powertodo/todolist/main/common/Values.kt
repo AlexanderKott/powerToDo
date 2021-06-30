@@ -3,6 +3,10 @@ package site.kotty_kov.powertodo.todolist.main.common
 
 object Values{
 
+enum class States {
+    NOT_INITIALIZED, NO_PASSWORD, IS_PROTECTED
+}
+
 
     const val channelId = "Alarms"
     val colours = arrayOf("#9CBDFF","#E4BEFF","#A8FFB4","#FFAAAA")

@@ -9,9 +9,13 @@ import site.kotty_kov.powertodo.todolist.main.data.TodoItem
 import site.kotty_kov.powertodo.todolist.main.data.db.TodoRoomDatabase
 import site.kotty_kov.powertodo.todolist.main.done.DoneRecord
 import site.kotty_kov.powertodo.todolist.main.inprogress.NotificationHelper
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepository
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepositoryImpl
+import site.kotty_kov.powertodo.todolist.main.repository.SharedPrefsRepository
+import site.kotty_kov.powertodo.todolist.main.repository.SharedPrefsRepositoryImpl
 
 
-class SharedViewModelToDo(base: TodoRoomDatabase, application: App) :
+class ToDoViewModel(base: TodoRoomDatabase, application: App) :
     AndroidViewModel(application) {
 
     init {

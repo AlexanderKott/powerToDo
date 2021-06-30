@@ -23,37 +23,29 @@ import site.kotty_kov.powertodo.todolist.main.data.TodoItem
 import site.kotty_kov.powertodo.todolist.main.todo.view.recycler.ActionsListener
 import site.kotty_kov.powertodo.todolist.main.todo.view.recycler.ItemsAdapter
 import site.kotty_kov.powertodo.todolist.main.todo.view.recycler.SwipeItemHelper
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 
 
-class ToDoFragment : Fragment() {
+class ToDoFragment : Fragment(R.layout.fragment_to_do) {
 
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
     private lateinit var recycler: RecyclerView
     private lateinit var rAdapter: ItemsAdapter
     private var color = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        return FragmentToDoBinding.inflate(inflater, container, false).root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentToDoBinding.bind(view)
 
-        initRecycler(viewModelToDo, binding)
-        iniListSwitcher(viewModelToDo, binding)
-        initBottomNavigation(binding, viewModelToDo)
+        initRecycler(viewModelToDoViewModel, binding)
+        iniListSwitcher(viewModelToDoViewModel, binding)
+        initBottomNavigation(binding, viewModelToDoViewModel)
     }
 
-    private fun iniListSwitcher(viewModelToDo: SharedViewModelToDo, binding: FragmentToDoBinding) {
-        viewModelToDo.toDoItemsCount.observe(viewLifecycleOwner, { value ->
+    private fun iniListSwitcher(viewModelToDoViewModel: ToDoViewModel, binding: FragmentToDoBinding) {
+        viewModelToDoViewModel.toDoItemsCount.observe(viewLifecycleOwner, { value ->
             binding.switcher.displayedChild = value
             if (value == 1) {
                 binding.textEmpty.isGone = false
@@ -75,10 +67,10 @@ class ToDoFragment : Fragment() {
 
     private fun initBottomNavigation(
         binding: FragmentToDoBinding,
-        viewModelToDo: SharedViewModelToDo
+        viewModelToDoViewModel: ToDoViewModel
     ) {
         with(binding.bottomNavigationTD) {
-            viewModelToDo.colour.observe(viewLifecycleOwner, { clr ->
+            viewModelToDoViewModel.colour.observe(viewLifecycleOwner, { clr ->
                 color = clr
                 when (clr) {
                     0 -> pad1.isChecked = true
@@ -109,11 +101,11 @@ class ToDoFragment : Fragment() {
             }
 
             clearDone.setOnClickListener {
-                viewModelToDo.clearDoneItems()
+                viewModelToDoViewModel.clearDoneItems()
             }
 
             close.setOnClickListener {
-                viewModelToDo.saveColorButtonsState()
+                viewModelToDoViewModel.saveColorButtonsState()
                 collapseBottom(binding.bottomNavigationTD.bottomSheetTD)
                 requestPasswordPage()
                 requireActivity().moveTaskToBack(true)
@@ -121,19 +113,19 @@ class ToDoFragment : Fragment() {
 
 
             pad1.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
             }
 
             pad2.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
             }
 
             pad3.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
             }
 
             pad4.setOnClickListener {
-                updateColor(it, viewModelToDo, binding)
+                updateColor(it, viewModelToDoViewModel, binding)
             }
 
 
@@ -194,12 +186,12 @@ class ToDoFragment : Fragment() {
 
     private fun updateColor(
         it: View,
-        viewModelToDo: SharedViewModelToDo,
+        viewModelToDoViewModel: ToDoViewModel,
         binding: FragmentToDoBinding
     ) {
-        viewModelToDo.setColorToItemsReturn(Integer.parseInt(it.tag as String))
+        viewModelToDoViewModel.setColorToItemsReturn(Integer.parseInt(it.tag as String))
         with(binding.bottomNavigationTD) {
-            viewModelToDo.prepareButtonsStateToSave(
+            viewModelToDoViewModel.prepareButtonsStateToSave(
                 pad1.isChecked,
                 pad2.isChecked,
                 pad3.isChecked,
@@ -208,7 +200,7 @@ class ToDoFragment : Fragment() {
         }
     }
 
-    private fun initRecycler(viewModelToDo: SharedViewModelToDo, binding: FragmentToDoBinding) {
+    private fun initRecycler(viewModelToDoViewModel: ToDoViewModel, binding: FragmentToDoBinding) {
         val adapter = ItemsAdapter(object : ActionsListener {
             override fun cardViewLongClick(todoitem: TodoItem) {
                 activity?.supportFragmentManager?.let {
@@ -222,7 +214,7 @@ class ToDoFragment : Fragment() {
             }
 
             override fun doneCheckboxClick(todoitem: TodoItem) {
-                viewModelToDo.updateItem(todoitem)
+                viewModelToDoViewModel.updateItem(todoitem)
             }
         })
 
@@ -235,7 +227,7 @@ class ToDoFragment : Fragment() {
         val sih = object : SwipeItemHelper(requireContext(),
             object : OnSwipeToDoListener {
                 override fun onItemDelete(pos: Int) {
-                    viewModelToDo.deleteItem(adapter.getItemById(pos))
+                    viewModelToDoViewModel.deleteItem(adapter.getItemById(pos))
                 }
 
                 override fun isItemAllowedToSwipe(pos: Int): Boolean {
@@ -243,7 +235,7 @@ class ToDoFragment : Fragment() {
                 }
 
                 override fun onItemSchedule(pos: Int) {
-                    viewModelToDo.scheduleItem(adapter.getItemById(pos))
+                    viewModelToDoViewModel.scheduleItem(adapter.getItemById(pos))
                 }
             }) {}
 
@@ -253,17 +245,17 @@ class ToDoFragment : Fragment() {
         sih.leftIcon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_close_24)
 
         //configure right swipe
-        sih.rightBG = ContextCompat.getColor(requireContext(), R.color.gray)
+        sih.rightBG = ContextCompat.getColor(requireContext(), R.color.purple_200)
         sih.rightLabel = getString(R.string.schedule)
         sih.rightIcon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_forward)
 
         val touchHelper = ItemTouchHelper(sih)
         touchHelper.attachToRecyclerView(binding.todoListRecycler)
 
-        viewModelToDo.toDoItems.observe(viewLifecycleOwner, { posts ->
+        viewModelToDoViewModel.toDoItems.observe(viewLifecycleOwner, { posts ->
             val count = adapter.itemCount
             adapter.submitList(posts)
-            viewModelToDo.setToDoItemsCount(posts.size)
+            viewModelToDoViewModel.setToDoItemsCount(posts.size)
             if (posts.size > count) {
                 recycler.postDelayed(Runnable {
                     recycler.smoothScrollToPosition(0)

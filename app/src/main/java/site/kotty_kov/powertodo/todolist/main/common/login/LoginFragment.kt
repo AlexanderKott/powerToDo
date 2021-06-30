@@ -6,16 +6,15 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
-import kotlinx.coroutines.runBlocking
 import site.kotty_kov.powertodo.R
 import site.kotty_kov.powertodo.databinding.FragmentLoginBinding
 import site.kotty_kov.powertodo.todolist.main.common.Values
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelCommon
+import site.kotty_kov.powertodo.todolist.main.viewModel.CommonViewModel
 
 
 class LoginFragment : Fragment() {
 
-    private val viewModel: SharedViewModelCommon by viewModels(
+    private val viewModelViewModel: CommonViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
     private lateinit var binding: FragmentLoginBinding
@@ -34,9 +33,9 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
-        runBlocking {
-            password = viewModel.getPassword()
-        }
+        viewModelViewModel.getPassword().observe(viewLifecycleOwner, { pass ->
+            password = pass
+        })
 
         binding.b0.setOnClickListener {
             addChar("0")

@@ -23,9 +23,9 @@ import site.kotty_kov.powertodo.todolist.main.common.utils.hideKeyboard
 import site.kotty_kov.powertodo.todolist.main.common.utils.setClipboard
 import site.kotty_kov.powertodo.todolist.main.data.notepad.NoteItem
 import site.kotty_kov.powertodo.todolist.main.notepad.recycler.NotepadSwipeHelper
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelCommon
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelNotePad
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.CommonViewModel
+import site.kotty_kov.powertodo.todolist.main.viewModel.NotePadViewModel
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 
 
 class NotePadMainFragment() : Fragment() {
@@ -33,13 +33,13 @@ class NotePadMainFragment() : Fragment() {
     private lateinit var urStore : UndoRedoStore
     private val gson =  Gson()
 
-    private val viewModelNotePad: SharedViewModelNotePad by viewModels(
+    private val viewModelNotePadViewModel: NotePadViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
-    private val vmCommon: SharedViewModelCommon by viewModels(
+    private val vmCommonViewModel: CommonViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
 
@@ -76,7 +76,7 @@ class NotePadMainFragment() : Fragment() {
 
 
     private fun iniListSwitcher(binding: NotepadApplicationFragmentBinding) {
-        viewModelNotePad.notesItemsCount.observe(viewLifecycleOwner, { state ->
+        viewModelNotePadViewModel.notesItemsCount.observe(viewLifecycleOwner, { state ->
             //page to display
             binding.viewflipper.displayedChild = state
 
@@ -183,7 +183,7 @@ class NotePadMainFragment() : Fragment() {
             //common
             close.setOnClickListener {
                 collapseBottom(binding.bottomNavigationN.bottomSheetND)
-                viewModelToDo.saveColorButtonsState()
+                viewModelToDoViewModel.saveColorButtonsState()
                 requestPasswordPage()
                 requireActivity().moveTaskToBack(true)
             }
@@ -201,8 +201,8 @@ class NotePadMainFragment() : Fragment() {
     private fun saveRecordToDB(binding: NotepadApplicationFragmentBinding) {
         if (binding.linedEdit.text.toString().trim() != "") {
             undoredohelper.storePersistentState(urStore, UNDOPREFIX)
-            viewModelNotePad.upsert(
-                viewModelNotePad.getRecordForEdit()
+            viewModelNotePadViewModel.upsert(
+                viewModelNotePadViewModel.getRecordForEdit()
                     .copy(text = binding.linedEdit.text.toString(),
                     undoHistory = gson.toJson(urStore))
             )
@@ -214,7 +214,7 @@ class NotePadMainFragment() : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModelNotePad.getRecordForEdit().text?.let { textFromRecord ->
+        viewModelNotePadViewModel.getRecordForEdit().text?.let { textFromRecord ->
             val editorText = binding.linedEdit.text.toString()
             if (editorText.trim() != "" && textFromRecord != editorText) {
                 saveRecordToDB(binding)
@@ -241,7 +241,7 @@ class NotePadMainFragment() : Fragment() {
             binding.viewflipper.displayedChild = EDIT
             listNotesG.visibility = View.GONE
             editNoteG.visibility = View.VISIBLE
-            vmCommon.setEditNotepadRecord()
+            vmCommonViewModel.setEditNotepadRecord()
         }
     }
 
@@ -292,7 +292,7 @@ class NotePadMainFragment() : Fragment() {
 
             //edit when user click record
             override fun cardViewLongClick(item: NoteItem) {
-                viewModelNotePad.markRecordForEdit(item)
+                viewModelNotePadViewModel.markRecordForEdit(item)
                 binding.linedEdit.setText(item.text)
                 setNoteEditMode(binding, item)
 
@@ -307,8 +307,8 @@ class NotePadMainFragment() : Fragment() {
         val itemTouchHelper = ItemTouchHelper(object : NotepadSwipeHelper(binding.notesRecycler) {
             override fun instantiateUnderlayButton(position: Int): List<UnderlayButton> {
                 val cancelButton = cancelButton(position)
-                val deleteButton = deleteButton(position, viewModelNotePad)
-                val emptyButton = emptyButton(position, viewModelNotePad)
+                val deleteButton = deleteButton(position, viewModelNotePadViewModel)
+                val emptyButton = emptyButton(position, viewModelNotePadViewModel)
 
                 return listOf(cancelButton, deleteButton, emptyButton)
             }
@@ -316,9 +316,9 @@ class NotePadMainFragment() : Fragment() {
 
         itemTouchHelper.attachToRecyclerView(binding.notesRecycler)
 
-        viewModelNotePad.notesItems.observe(viewLifecycleOwner, { posts ->
+        viewModelNotePadViewModel.notesItems.observe(viewLifecycleOwner, { posts ->
             radapter.submitList(posts)
-            viewModelNotePad.setToDoItemsCount(posts.size)
+            viewModelNotePadViewModel.setToDoItemsCount(posts.size)
         })
     }
 
@@ -338,7 +338,7 @@ class NotePadMainFragment() : Fragment() {
 
     private fun deleteButton(
         position: Int,
-        vm: SharedViewModelNotePad
+        vm: NotePadViewModel
     ): NotepadSwipeHelper.UnderlayButton {
         return NotepadSwipeHelper.UnderlayButton(
             requireContext(),
@@ -355,7 +355,7 @@ class NotePadMainFragment() : Fragment() {
     //hack
     private fun emptyButton(
         position: Int,
-        vm: SharedViewModelNotePad
+        vm: NotePadViewModel
     ): NotepadSwipeHelper.UnderlayButton {
         return NotepadSwipeHelper.UnderlayButton(
             requireContext(),

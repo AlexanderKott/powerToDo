@@ -1,4 +1,4 @@
-package site.kotty_kov.powertodo.todolist.main.viewModel
+package site.kotty_kov.powertodo.todolist.main.repository
 
 import androidx.lifecycle.LiveData
 import site.kotty_kov.powertodo.todolist.main.data.*
@@ -11,6 +11,7 @@ import site.kotty_kov.powertodo.todolist.main.data.user.UserDAO
 import site.kotty_kov.powertodo.todolist.main.data.user.UserInfo
 import site.kotty_kov.powertodo.todolist.main.done.DoneRecord
 import site.kotty_kov.powertodo.todolist.main.todo.view.ToDoItemTransfer
+import site.kotty_kov.powertodo.todolist.main.viewModel.ViewModelUtils
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

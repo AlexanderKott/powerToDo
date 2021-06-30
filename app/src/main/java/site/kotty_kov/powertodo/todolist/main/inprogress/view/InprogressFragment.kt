@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.*
 import site.kotty_kov.powertodo.databinding.FragmentInprogressBinding
 import site.kotty_kov.powertodo.todolist.main.common.*
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelCommon
+import site.kotty_kov.powertodo.todolist.main.viewModel.CommonViewModel
 
 class InprogressFragment : Fragment() {
 
 
-    private val vmCommon: SharedViewModelCommon by viewModels(
+    private val vmCommonViewModel: CommonViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
     override fun onCreateView(
@@ -27,11 +27,11 @@ class InprogressFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentInprogressBinding.bind(view)
 
-        when (vmCommon.getApplicationState()) {
-            7 -> displayList(vmCommon)
-            5 -> displayTimerEdit(vmCommon)
-            6 -> displayRecordEdit(vmCommon)
-            else -> { displayList(vmCommon) }
+        when (vmCommonViewModel.getApplicationState()) {
+            7 -> displayList(vmCommonViewModel)
+            5 -> displayTimerEdit(vmCommonViewModel)
+            6 -> displayRecordEdit(vmCommonViewModel)
+            else -> { displayList(vmCommonViewModel) }
         }
 
 
@@ -57,21 +57,21 @@ class InprogressFragment : Fragment() {
         childFragmentManager
             .setFragmentResultListener(Values.InProgressEditKey, this) { _, bundle ->
                 bundle.getString(Values.TimerEditKey)?.let {
-                    displayTimerEdit(vmCommon)
+                    displayTimerEdit(vmCommonViewModel)
                 }
 
                 bundle.getString(Values.RecordEditKey)?.let {
-                    displayRecordEdit(vmCommon)
+                    displayRecordEdit(vmCommonViewModel)
                 }
 
 
                 ///  Callbacks from child fragments
                 bundle.getString(Values.TimerEditDoneKey)?.let {
-                    backToList(vmCommon)
+                    backToList(vmCommonViewModel)
                 }
 
                 bundle.getString(Values.EditRecordDoneKey)?.let {
-                    backToList(vmCommon)
+                    backToList(vmCommonViewModel)
                 }
 
 

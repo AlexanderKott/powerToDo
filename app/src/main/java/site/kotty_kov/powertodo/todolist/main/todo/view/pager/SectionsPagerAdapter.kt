@@ -1,4 +1,4 @@
-package site.kotty_kov.powertodo.todolist.main.common
+package site.kotty_kov.powertodo.todolist.main.todo.view.pager
 
 import android.content.Context
 import androidx.fragment.app.Fragment

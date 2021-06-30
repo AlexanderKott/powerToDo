@@ -6,7 +6,7 @@ import android.content.Intent
 import site.kotty_kov.powertodo.R
 import site.kotty_kov.powertodo.todolist.main.common.App
 import site.kotty_kov.powertodo.todolist.main.common.Values
-import site.kotty_kov.powertodo.todolist.main.viewModel.RoomRepositoryImpl
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepositoryImpl
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

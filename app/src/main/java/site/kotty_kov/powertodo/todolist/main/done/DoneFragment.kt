@@ -18,13 +18,13 @@ import site.kotty_kov.powertodo.todolist.main.common.*
 import site.kotty_kov.powertodo.todolist.main.common.utils.collapseBottom
 import site.kotty_kov.powertodo.todolist.main.todo.view.Utils
 import site.kotty_kov.powertodo.todolist.main.todo.view.recycler.SwipeItemHelper
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 
 
 class DoneFragment : Fragment(), DoneItemsCallBack {
 
     private lateinit var binding : FragmentDoneBinding
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
 
     private var itemsList: List<DoneRecord>? = null
@@ -41,7 +41,7 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDoneBinding.bind(view)
 
-        initBottomNavigation(binding, viewModelToDo)
+        initBottomNavigation(binding, viewModelToDoViewModel)
 
         //init recycler
         val recyclerAdapter = DoneAdapter(this as DoneItemsCallBack)
@@ -50,7 +50,7 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
             object : OnSwipeToDoListener {
                 override fun onItemDelete(pos: Int) {
                     if (recordIsNotNull(recyclerAdapter, pos)) {
-                        viewModelToDo.deleteDoneItem(recyclerAdapter.getItemById(pos))
+                        viewModelToDoViewModel.deleteDoneItem(recyclerAdapter.getItemById(pos))
                     } else {
                         recyclerAdapter.notifyItemChanged(pos)
                     }
@@ -62,7 +62,7 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
 
                 override fun onItemSchedule(pos: Int) {
                     if (recordIsNotNull(recyclerAdapter, pos)) {
-                        viewModelToDo.scheduleDoneItem(recyclerAdapter.getItemById(pos))
+                        viewModelToDoViewModel.scheduleDoneItem(recyclerAdapter.getItemById(pos))
                         recyclerAdapter.notifyItemChanged(pos)
                         Toast.makeText(
                             requireContext(),
@@ -105,7 +105,7 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
             })
         }
 
-        viewModelToDo.doneItems.observe(viewLifecycleOwner, Observer { lst ->
+        viewModelToDoViewModel.doneItems.observe(viewLifecycleOwner, Observer { lst ->
             itemsList = prepareItems(lst)
             recyclerAdapter.submitList(itemsList)
         })
@@ -138,10 +138,10 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
 
     private fun initBottomNavigation(
         binding: FragmentDoneBinding,
-        viewModelToDo: SharedViewModelToDo
+        viewModelToDoViewModel: ToDoViewModel
     ) {
             with(binding.bottomNavigationD) {
-                viewModelToDo.colour.observe(viewLifecycleOwner, { color ->
+                viewModelToDoViewModel.colour.observe(viewLifecycleOwner, { color ->
                     when (color) {
                         0 -> pad1.isChecked = true
                         1 -> pad2.isChecked = true
@@ -153,27 +153,27 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
 
 
                 pad1.setOnClickListener {
-                    updateColor(it, viewModelToDo, binding)
+                    updateColor(it, viewModelToDoViewModel, binding)
 
                 }
 
                 pad2.setOnClickListener {
-                    updateColor(it, viewModelToDo, binding)
+                    updateColor(it, viewModelToDoViewModel, binding)
 
                 }
 
                 pad3.setOnClickListener {
-                    updateColor(it, viewModelToDo, binding)
+                    updateColor(it, viewModelToDoViewModel, binding)
 
                 }
 
                 pad4.setOnClickListener {
-                    updateColor(it, viewModelToDo, binding)
+                    updateColor(it, viewModelToDoViewModel, binding)
 
                 }
 
                 close.setOnClickListener {
-                    viewModelToDo.saveColorButtonsState()
+                    viewModelToDoViewModel.saveColorButtonsState()
                     collapseBottom(binding.bottomNavigationD.bottomSheetD)
                     requestPasswordPage()
                     requireActivity().moveTaskToBack(true)
@@ -236,13 +236,13 @@ class DoneFragment : Fragment(), DoneItemsCallBack {
 
     private fun updateColor(
         it: View,
-        viewModelToDo: SharedViewModelToDo,
+        viewModelToDoViewModel: ToDoViewModel,
         binding: FragmentDoneBinding
     ) {
         binding.bottomNavigationD?.let { bottom ->
-            viewModelToDo.setColorToItemsReturn(Integer.parseInt(it.tag as String))
+            viewModelToDoViewModel.setColorToItemsReturn(Integer.parseInt(it.tag as String))
             with(binding.bottomNavigationD) {
-                viewModelToDo.prepareButtonsStateToSave(
+                viewModelToDoViewModel.prepareButtonsStateToSave(
                     pad1.isChecked,
                     pad2.isChecked,
                     pad3.isChecked,

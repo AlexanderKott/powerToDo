@@ -9,29 +9,23 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayout
-import site.kotty_kov.powertodo.databinding.FragmentToDoApplicationBinding
-import site.kotty_kov.powertodo.todolist.main.common.SectionsPagerAdapter
+import site.kotty_kov.powertodo.R
+import site.kotty_kov.powertodo.databinding.FragmentToDoMainBinding
+import site.kotty_kov.powertodo.todolist.main.todo.view.pager.SectionsPagerAdapter
 import site.kotty_kov.powertodo.todolist.main.common.Values
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 
 
-class ToDoMainFragment : Fragment() {
+class ToDoMainFragment : Fragment(R.layout.fragment_to_do_main) {
 
-    private lateinit var binding: FragmentToDoApplicationBinding
+    private lateinit var binding: FragmentToDoMainBinding
 
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return FragmentToDoApplicationBinding.inflate(inflater, container, false).root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentToDoApplicationBinding.bind(view)
+        binding = FragmentToDoMainBinding.bind(view)
 
         binding.tabz.setupWithViewPager(binding.viewPager)
         val sectionsPagerAdapter = SectionsPagerAdapter(
@@ -83,7 +77,7 @@ class ToDoMainFragment : Fragment() {
                 val trObject: ToDoItemTransfer? =
                     Utils.gsonParser?.fromJson(it, ToDoItemTransfer::class.java)
                 if (trObject != null) {
-                    viewModelToDo.addNewItems(trObject)
+                    viewModelToDoViewModel.addNewItems(trObject)
 
                 }
             }
@@ -92,7 +86,7 @@ class ToDoMainFragment : Fragment() {
             bundle.getString(Values.editFragmentBundleKey)?.let { param ->
                 Utils.gsonParser?.fromJson(param, ToDoItemTransfer::class.java)
                     ?.let {
-                    viewModelToDo.updateItem(it)
+                    viewModelToDoViewModel.updateItem(it)
                 }
 
             }

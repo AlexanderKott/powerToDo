@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import site.kotty_kov.powertodo.todolist.main.common.App
 import site.kotty_kov.powertodo.todolist.main.data.notepad.NoteItem
 import site.kotty_kov.powertodo.todolist.main.data.db.TodoRoomDatabase
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepository
+import site.kotty_kov.powertodo.todolist.main.repository.RoomRepositoryImpl
 
 
-class SharedViewModelNotePad(base: TodoRoomDatabase, application: App) :
+class NotePadViewModel(base: TodoRoomDatabase, application: App) :
     AndroidViewModel(application) {
 
     private val roomRepo : RoomRepository = RoomRepositoryImpl(base)

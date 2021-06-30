@@ -27,7 +27,7 @@
                     android:layout_height="wrap_content" />
             </com.google.android.material.appbar.AppBarLayout>
 
-            <site.kotty_kov.powertodo.todolist.main.common.NoSwipePager
+            <site.kotty_kov.powertodo.todolist.main.todo.view.pager.NoSwipePager
                 android:id="@+id/view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -21,14 +21,14 @@ import site.kotty_kov.powertodo.todolist.main.common.Values
 import site.kotty_kov.powertodo.todolist.main.inprogress.NotificationHelper
 import site.kotty_kov.powertodo.todolist.main.inprogress.TimeCalculator
 import site.kotty_kov.powertodo.todolist.main.todo.view.Utils
-import site.kotty_kov.powertodo.todolist.main.viewModel.SharedViewModelToDo
+import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 import java.util.*
 
 
 class InProgressSetTimerFragment : Fragment() {
     private lateinit var binding: FragmentInprogressChildSetTimerBinding
 
-    private val viewModelToDo: SharedViewModelToDo by viewModels(
+    private val viewModelToDoViewModel: ToDoViewModel by viewModels(
         ownerProducer = { this.requireActivity() })
     
     override fun onCreateView(
@@ -75,17 +75,17 @@ class InProgressSetTimerFragment : Fragment() {
 
 
         //Load data to form
-        loadDataToForm(viewModelToDo)
+        loadDataToForm(viewModelToDoViewModel)
 
         //Save data from form
-        saveDataListeners(viewModelToDo)
+        saveDataListeners(viewModelToDoViewModel)
 
         setupFormListeners()
 
 
     }
 
-    private fun saveDataListeners(viewModelToDo: SharedViewModelToDo) {
+    private fun saveDataListeners(viewModelToDoViewModel: ToDoViewModel) {
         with(binding) {
 
             timerEditDone.setOnClickListener {
@@ -106,7 +106,7 @@ class InProgressSetTimerFragment : Fragment() {
                     timeSpinnerPosition = intervalspinner.selectedItemPosition
                 )
 
-                viewModelToDo.getInProgressTempItem()?.let {
+                viewModelToDoViewModel.getInProgressTempItem()?.let {
                     it.timerSet = mode != 0
                     it.scheduled = Utils.gsonParser?.toJson(obj).toString()
                     it.whenTimerSet = if (mode == 1) {
@@ -140,7 +140,7 @@ class InProgressSetTimerFragment : Fragment() {
                     }
 
 
-                    viewModelToDo.updateInProgressItem(it)
+                    viewModelToDoViewModel.updateInProgressItem(it)
 
                     NotificationHelper.scheduleNotification(
                         requireContext(), 3000, NotificationHelper.TServiceState.USER_RUN
@@ -188,21 +188,21 @@ class InProgressSetTimerFragment : Fragment() {
                 timeSpinnerPosition = intervalspinner.selectedItemPosition
             )
             Utils.gsonParser?.toJson(obj)?.let {
-                viewModelToDo.inProgressTempItemAddValue(it) }
+                viewModelToDoViewModel.inProgressTempItemAddValue(it) }
         }
     }
 
 
-    private fun loadDataToForm(viewModelToDo: SharedViewModelToDo) {
+    private fun loadDataToForm(viewModelToDoViewModel: ToDoViewModel) {
         with(binding) {
             markViewsDisabled()
 
-            if (viewModelToDo.getInProgressTempItem()?.scheduled.isNullOrBlank()) {
+            if (viewModelToDoViewModel.getInProgressTempItem()?.scheduled.isNullOrBlank()) {
                 radioDisabled.isChecked = true
             }
 
             //load data if it is
-            viewModelToDo.getInProgressTempItem()?.let {
+            viewModelToDoViewModel.getInProgressTempItem()?.let {
 
                 Utils.gsonParser?.fromJson(it.scheduled, Values.TimerDataStorage::class.java)
                     ?.let { o ->
