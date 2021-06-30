@@ -9,10 +9,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import androidx.core.view.isGone
+import androidx.fragment.app.viewModels
 import site.kotty_kov.powertodo.R
 import site.kotty_kov.powertodo.databinding.AddnewitemFragmentBinding
 import site.kotty_kov.powertodo.todolist.main.data.TodoItem
 import site.kotty_kov.powertodo.todolist.main.common.Values
+import site.kotty_kov.powertodo.todolist.main.viewModel.CommonViewModel
 
 
 class AddEditItemFragment : DialogFragment() {
@@ -20,6 +22,9 @@ class AddEditItemFragment : DialogFragment() {
     private lateinit var binding: AddnewitemFragmentBinding
     private var updateItemId: Long = 0L
     private var elapsedTime: Int = 0
+
+    private val viewModel: CommonViewModel by viewModels(
+        ownerProducer = { this.requireActivity() })
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = AddnewitemFragmentBinding.inflate(requireActivity().layoutInflater)
@@ -56,7 +61,9 @@ class AddEditItemFragment : DialogFragment() {
         val builder = AlertDialog.Builder(activity)
         builder.setView(binding.root)
             .setPositiveButton(R.string.ok) { dialog, which ->
+               if  (viewModel.getApplicationState() != Values.LOCKED){
                 result(colorForNewItem)
+               }
             }
             .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.cancel() }
 

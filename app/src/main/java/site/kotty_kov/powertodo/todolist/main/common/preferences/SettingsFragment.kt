@@ -37,7 +37,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private var soundT: ListPreference? = null
     private var soundT2: Preference? = null
 
-    private var switchState: Boolean = false
     private lateinit var oldPassword: String
 
    private var defaultRingtone : Ringtone? = null

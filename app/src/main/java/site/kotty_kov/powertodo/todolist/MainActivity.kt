@@ -18,7 +18,7 @@ import site.kotty_kov.powertodo.todolist.main.viewModel.ToDoViewModel
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModelToDoViewModel: ToDoViewModel
-    private lateinit var vmCommonViewModel: CommonViewModel
+    private lateinit var vmCommon: CommonViewModel
 
     private var firstTime: Boolean = true
     private var lockApp: Values.States = Values.States.NOT_INITIALIZED
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         val factory = ViewModelFactory(App.getApp().getDatabase())
 
-        vmCommonViewModel =
+        vmCommon =
             ViewModelProviders.of(this, factory).get(CommonViewModel::class.java)
 
         viewModelToDoViewModel =
@@ -40,9 +40,9 @@ class MainActivity : AppCompatActivity() {
             ViewModelProviders.of(this, factory).get(NotePadViewModel::class.java)
 
 
-        vmCommonViewModel.checkPassword()
+        vmCommon.checkPassword()
 
-        vmCommonViewModel.isAppProtected().observe(this, { isPasswordProtected ->
+        vmCommon.isAppProtected().observe(this, { isPasswordProtected ->
             lockApp = if (isPasswordProtected) Values.States.IS_PROTECTED else Values.States.NO_PASSWORD
         })
 
@@ -53,17 +53,17 @@ class MainActivity : AppCompatActivity() {
                 bundle.getString(Values.btn_menuKey).let {
                     when (it) {
                         Values.todoKey -> {
-                            requestTodoFragment(vmCommonViewModel)
+                            requestTodoFragment(vmCommon)
                         }
                         Values.notepadKey -> {
-                            requestNotepadFragment(vmCommonViewModel)
+                            requestNotepadFragment(vmCommon)
                         }
                         Values.settingsKey -> {
-                            requestSettingsFragment(vmCommonViewModel)
+                            requestSettingsFragment(vmCommon)
                         }
                         Values.passwordPage -> {
                             if (lockApp == Values.States.IS_PROTECTED) {
-                                requestPasswordFragment()
+                                requestPasswordFragment(vmCommon)
                             }
                         }
 
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         //ивент на Unlock
         supportFragmentManager
             .setFragmentResultListener(Values.unlock, this) { _, bundle ->
-                requestTodoFragment(vmCommonViewModel)
+                requestTodoFragment(vmCommon)
             }
 
         requestLoadingFragment()
@@ -93,10 +93,10 @@ class MainActivity : AppCompatActivity() {
             Values.States.IS_PROTECTED -> {
                 when {
                     appLockTime == 0L -> {
-                        requestPasswordFragment()
+                        requestPasswordFragment(vmCommon)
                     }
                     appLockTime < System.currentTimeMillis() - Values.lockTime -> {
-                        requestPasswordFragment()
+                        requestPasswordFragment(vmCommon)
                     }
                     else -> {
                         //do nothing
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 
             Values.States.NO_PASSWORD -> {
                 if (firstTime) {
-                    requestTodoFragment(vmCommonViewModel)
+                    requestTodoFragment(vmCommon)
                     firstTime = false
                 }
             }
@@ -117,8 +117,8 @@ class MainActivity : AppCompatActivity() {
         val runable = object : Runnable {
             override fun run() {
                 when (lockApp) {
-                    Values.States.NO_PASSWORD -> requestTodoFragment(vmCommonViewModel)
-                    Values.States.IS_PROTECTED -> requestPasswordFragment()
+                    Values.States.NO_PASSWORD -> requestTodoFragment(vmCommon)
+                    Values.States.IS_PROTECTED -> requestPasswordFragment(vmCommon)
                     Values.States.NOT_INITIALIZED -> Handler(Looper.getMainLooper()).postDelayed(this, 300)
                 }
             }
@@ -140,14 +140,14 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
             return
         }
-        when (vmCommonViewModel.getApplicationState()) {
+        when (vmCommon.getApplicationState()) {
             4 -> {
-                requestNotepadFragment(vmCommonViewModel)
+                requestNotepadFragment(vmCommon)
                 return
             }
 
             5, 6 -> {
-                requestTodoFragment(vmCommonViewModel, 1)
+                requestTodoFragment(vmCommon, 1)
                 return
             }
         }

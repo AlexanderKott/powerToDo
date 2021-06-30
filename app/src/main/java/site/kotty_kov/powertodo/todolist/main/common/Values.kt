@@ -8,6 +8,8 @@ enum class States {
 }
 
 
+    const val  LOCKED = 2
+
     const val channelId = "Alarms"
     val colours = arrayOf("#9CBDFF","#E4BEFF","#A8FFB4","#FFAAAA")
 

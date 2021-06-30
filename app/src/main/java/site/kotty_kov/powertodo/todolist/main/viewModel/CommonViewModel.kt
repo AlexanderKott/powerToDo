@@ -75,7 +75,7 @@ class CommonViewModel(base: TodoRoomDatabase, application: App) :
     }
 
     fun setPasswordLockScr() {
-        applicationDisplayState = 2
+        applicationDisplayState = Values.LOCKED
     }
 
     fun setSettings() {
@@ -87,15 +87,15 @@ class CommonViewModel(base: TodoRoomDatabase, application: App) :
     }
 
     fun setLastInPorgressScreenStateAsTitmer() {
-        applicationDisplayState = 5 //1
+        applicationDisplayState = 5
     }
 
     fun setLastInPorgressScreenStateAsRecordEdit() {
-        applicationDisplayState = 6  //2
+        applicationDisplayState = 6
     }
 
     fun setLastInPorgressScreenStateAsList() {
-        applicationDisplayState = 7 //0
+        applicationDisplayState = 7 
     }
 
 
@@ -103,6 +103,8 @@ class CommonViewModel(base: TodoRoomDatabase, application: App) :
     override fun onCleared() {
         roomRepo.shutdown()
     }
+
+
 
 
 }

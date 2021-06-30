@@ -129,11 +129,12 @@ fun AppCompatActivity.requestLoadingFragment() {
 
 
 
-fun AppCompatActivity.requestPasswordFragment() {
+fun AppCompatActivity.requestPasswordFragment(vm: CommonViewModel,) {
     supportFragmentManager.commit {
         replace<LoginFragment>(R.id.child)
         setReorderingAllowed(true)
     }
+    vm.setPasswordLockScr()
     requestPortrait()
 }
 
